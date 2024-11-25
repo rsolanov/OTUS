@@ -1,0 +1,138 @@
+version: '3'
+services:
+  zookeeper:
+    build:
+        context: .
+        dockerfile: Dockerfile.zookeeper
+    networks:
+      - ch_sharded
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+      - ZOOKEEPER_CLIENT_PORT=2181
+    ports:
+      - "2182:2181"
+      - "2888:2888"
+      - "3888:3888"
+    
+  clickhouse4:
+    build:
+        context: .
+        dockerfile: Dockerfile.clickhouse
+    environment:
+      - SHARD=01
+      - REPLICA=01
+    ports:
+      - "8005:9000"
+      - "9126:8123"
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 262144
+        hard: 262144
+    networks:
+      - ch_sharded
+    depends_on:
+      - zookeeper
+      
+  clickhouse5:
+    build:
+        context: .
+        dockerfile: Dockerfile.clickhouse
+    environment:
+      - SHARD=01
+      - REPLICA=02
+    ports:
+      - "8006:9000"
+      - "9127:8123"
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 262144
+        hard: 262144
+    networks:
+      - ch_sharded
+    depends_on:
+      - zookeeper
+      
+  clickhouse6:
+    build:
+        context: .
+        dockerfile: Dockerfile.clickhouse
+    environment:
+      - SHARD=02
+      - REPLICA=01
+    ports:
+      - "8007:9000"
+      - "9128:8123"
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 262144
+        hard: 262144
+    networks:
+      - ch_sharded
+    depends_on:
+      - zookeeper
+      
+  clickhouse7:
+    build:
+        context: .
+        dockerfile: Dockerfile.clickhouse
+    environment:
+      - SHARD=02
+      - REPLICA=02
+    ports:
+      - "8008:9000"
+      - "9129:8123"
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 262144
+        hard: 262144
+    networks:
+      - ch_sharded
+    depends_on:
+      - zookeeper
+      
+  clickhouse8:
+    build:
+        context: .
+        dockerfile: Dockerfile.clickhouse
+    environment:
+      - SHARD=03
+      - REPLICA=01
+    ports:
+      - "8009:9000"
+      - "9130:8123"
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 262144
+        hard: 262144
+    networks:
+      - ch_sharded
+    depends_on:
+      - zookeeper
+      
+  clickhouse9:
+    build:
+        context: .
+        dockerfile: Dockerfile.clickhouse
+    environment:
+      - SHARD=03
+      - REPLICA=02
+    ports:
+      - "8010:9000"
+      - "9131:8123"
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 262144
+        hard: 262144
+    networks:
+      - ch_sharded
+    depends_on:
+      - zookeeper
+networks:
+  ch_sharded:
+    driver: bridge

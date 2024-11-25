@@ -1,0 +1,101 @@
+FROM clickhouse/clickhouse-server
+
+USER root
+RUN apt-get update && apt-get install -y mc nano
+
+# Создание файла default-password.xml
+RUN echo '<clickhouse>\n\
+    <users>\n\
+        <default>\n\
+            <password>default</password>\n\
+        </default>\n\
+    </users>\n\
+</clickhouse>' > /etc/clickhouse-server/users.d/default-password.xml
+
+# Создание базового файла z_config.xml
+RUN echo '<clickhouse>\n\
+    <remote_servers>\n\
+        <sharded_cluster_sh4r3>\n\
+            <shard>\n\
+                <internal_replication>true</internal_replication>\n\
+                <replica>\n\
+                    <host>clickhouse10</host>\n\
+                    <port>9000</port>\n\
+                </replica>\n\
+                <replica>\n\
+                    <host>clickhouse11</host>\n\
+                    <port>9000</port>\n\
+                </replica>\n\
+                <replica>\n\
+                    <host>clickhouse12</host>\n\
+                    <port>9000</port>\n\
+                </replica>\n\
+            </shard>\n\
+            <shard>\n\
+                <internal_replication>true</internal_replication>\n\
+                <replica>\n\
+                    <host>clickhouse13</host>\n\
+                    <port>9000</port>\n\
+                </replica>\n\
+                <replica>\n\
+                    <host>clickhouse14</host>\n\
+                    <port>9000</port>\n\
+                </replica>\n\
+                <replica>\n\
+                    <host>clickhouse15</host>\n\
+                    <port>9000</port>\n\
+                </replica>\n\
+            </shard>\n\
+            <shard>\n\
+                <internal_replication>true</internal_replication>\n\
+                <replica>\n\
+                    <host>clickhouse16</host>\n\
+                    <port>9000</port>\n\
+                </replica>\n\
+                <replica>\n\
+                    <host>clickhouse17</host>\n\
+                    <port>9000</port>\n\
+                </replica>\n\
+                <replica>\n\
+                    <host>clickhouse18</host>\n\
+                    <port>9000</port>\n\
+                </replica>\n\
+            </shard>\n\
+            <shard>\n\
+                <internal_replication>true</internal_replication>\n\
+                <replica>\n\
+                    <host>clickhouse19</host>\n\
+                    <port>9000</port>\n\
+                </replica>\n\
+                <replica>\n\
+                    <host>clickhouse20</host>\n\
+                    <port>9000</port>\n\
+                </replica>\n\
+                <replica>\n\
+                    <host>clickhouse21</host>\n\
+                    <port>9000</port>\n\
+                </replica>\n\
+            </shard>\n\			
+        </sharded_cluster_sh4r3>\n\
+    </remote_servers>\n\
+    <zookeeper>\n\
+        <node index="1">\n\
+            <host>zookeeper</host>\n\
+            <port>2181</port>\n\
+        </node>\n\
+    </zookeeper>\n\
+    <macros>\n\
+        <cluster>sharded_cluster_sh4r3</cluster>\n\
+        <shard>SHARD</shard>\n\
+        <replica>REPLICA</replica>\n\
+    </macros>\n\
+</clickhouse>' > /etc/clickhouse-server/config.d/z_config.xml
+
+# Создание скрипта update_config.sh
+RUN echo '#!/bin/bash\n\
+sed -i "s/SHARD/$SHARD/g" /etc/clickhouse-server/config.d/z_config.xml\n\
+sed -i "s/REPLICA/$REPLICA/g" /etc/clickhouse-server/config.d/z_config.xml\n\
+exec /entrypoint.sh "$@"' > /usr/local/bin/update_config.sh && \
+    chmod +x /usr/local/bin/update_config.sh
+
+ENTRYPOINT ["/usr/local/bin/update_config.sh"]
