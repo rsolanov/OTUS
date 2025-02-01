@@ -1,7 +1,7 @@
 import json
 import os
 
-CONTACTS: dict[str, tuple[str, str]]
+contacts: dict[str, tuple[str, str]]
 FILE_NAME: str = 'contact_book.json'
 
 
@@ -33,7 +33,7 @@ def save() -> None:
     Save the current contacts dictionary to a JSON file.
     """
     with open(FILE_NAME, 'w', encoding='UTF-8') as file:
-        json.dump(CONTACTS, file, indent=2, ensure_ascii=False)
+        json.dump(contacts, file, indent=2, ensure_ascii=False)
 
 
 def contact_show_list() -> None:
@@ -42,10 +42,10 @@ def contact_show_list() -> None:
     """
     print(' | '.join(key for key in ['name', 'phone', 'email']))
 
-    for phone, (name, email) in CONTACTS.items():
+    for phone, (name, email) in contacts.items():
         print(f'{name} | {phone} | {email}')
 
-    print(f'Total: {len(CONTACTS)} rows')
+    print(f'Total: {len(contacts)} rows')
     print()
 
 
@@ -54,10 +54,10 @@ def contact_find() -> None:
     Find and display a contact by phone number.
     """
     phone: str = input('Enter phone: ')
-    if phone not in CONTACTS:
+    if phone not in contacts:
         print('Contact with that number not exists')
     else:
-        name, email = CONTACTS[phone]
+        name, email = contacts[phone]
         print(' | '.join(key for key in ['name', 'phone', 'email']))
         print(f'{name} | {phone} | {email}')
     print()
@@ -68,12 +68,12 @@ def contact_add() -> None:
     Add a new contact to the dictionary.
     """
     phone: str = input('Enter phone: ')
-    if phone in CONTACTS:
+    if phone in contacts:
         print('Contact with that number already exists')
     else:
         name: str = input('Enter name: ')
         email: str = input('Enter email: ')
-        CONTACTS[phone] = (name, email)
+        contacts[phone] = (name, email)
         print('New contact has been added successfully')
     print()
 
@@ -83,12 +83,12 @@ def contact_edit() -> None:
     Edit an existing contact in the dictionary.
     """
     phone: str = input('Enter phone: ')
-    if phone not in CONTACTS:
+    if phone not in contacts:
         print('Contact with that number not exists')
     else:
         name: str = input('Enter new name: ')
         email: str = input('Enter new email: ')
-        CONTACTS[phone] = (name, email)
+        contacts[phone] = (name, email)
         print('Contact has been edited successfully')
     print()
 
@@ -98,10 +98,10 @@ def contact_delete() -> None:
     Delete an existing contact from the dictionary.
     """
     phone: str = input('enter phone: ')
-    if phone not in CONTACTS:
+    if phone not in contacts:
         print('Contact with that number not exists')
     else:
-        CONTACTS.pop(phone)
+        contacts.pop(phone)
         print('Contact has been deleted successfully')
     print()
 
@@ -111,8 +111,8 @@ def main() -> None:
     Main function to run the contact book application.
     Handles user input and calls appropriate functions based on user choice.
     """
-    global CONTACTS
-    CONTACTS = init()
+    global contacts
+    contacts = init()
     actions = {
         1: 'Show the entire list',
         2: 'Find existing contact',
