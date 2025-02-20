@@ -1,3 +1,6 @@
+from exceptions import ContactAlreadyExistsError, ContactNotFoundError
+
+
 class Contact:
     """
     Represents a single contact in the contact book.
