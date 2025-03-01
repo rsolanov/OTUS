@@ -6,32 +6,6 @@ from file_handler import FileHandler
 
 
 
-@pytest.fixture
-def contact_book():
-    """
-    Fixture to provide a clean instance of ContactBook for each test.
-
-    Returns:
-        ContactBook: A new instance of ContactBook with no contacts.
-    """
-    book = ContactBook()
-    book.clear()
-    return book
-
-
-
-@pytest.fixture
-def file_handler():
-    """
-    Fixture to provide an instance of FileHandler for file operations.
-
-    Returns:
-        FileHandler: An instance of FileHandler.
-    """
-    return FileHandler()
-
-
-
 def test_add_contact(contact_book):
     """
     Test adding a new contact to the contact book.
@@ -145,7 +119,7 @@ def test_load_contacts(file_handler):
     Args:
         file_handler (FileHandler): The file handler instance.
     """
-    contacts = file_handler.load_contacts("contact_book.json")
+    contacts = file_handler.load_contacts("../contact_book.json")
     assert isinstance(contacts, dict)
     assert "+79876543210" in contacts
     assert contacts["+79876543210"].name == "Соланов Роман"
