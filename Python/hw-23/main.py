@@ -1,8 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, status
 from starlette.responses import JSONResponse
 
 app = FastAPI()
 
-@app.get('/ping/')
+@app.get('/ping/', status_code=status.HTTP_200_OK)
 async def ping():
-    return JSONResponse(content={'message': 'pong'}, status_code=200)
+    return {'message': 'pong'}
